@@ -1,0 +1,109 @@
+#include <iostream>
+#include <limits>
+
+// Account class for the bank system
+class Account {
+private:
+    double balance;
+
+public:
+    // Constructor requires a minimum starting balance of $1000 for account activation.
+    // If the initial balance is less than $1000, the account is set to $0 and a warning is displayed.
+    Account(double initialBalance) {
+        if (initialBalance >= 1000) {
+            balance = initialBalance;
+        } else {
+            balance = 0;
+            std::cout << "Initial balance must be at least $1000. Balance set to $0.\n";
+        }
+    }
+    // Deposit money
+    void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+        } else {
+            std::cout << "Deposit amount is invalid.\n";
+        }
+    }
+
+    // Withdraw money from the account
+    void withdraw(double amount) {
+        if (amount <= 0) {
+            std::cout << "Invalid withdrawal amount.\n";
+        }
+        else if (amount > balance) {
+            std::cout << "Debit amount exceeded account balance.\n";
+        }
+        else {
+            balance -= amount;
+        }
+    }
+    // the current balance
+    double getBalance() const {
+        return balance;
+    }
+};
+
+int main() {
+
+    double starting;
+    std::cout << "Enter starting balance: ";
+    while (!(std::cin >> starting)) {
+        std::cin.clear(); // clear error flag
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // discard invalid input
+        std::cout << "Invalid input. Please enter a numeric value for starting balance: ";
+    }
+
+    // create account with the validated starting balance
+    Account acc(starting);
+
+    int option = 0;
+    double amt;
+
+    while (option != 4) {
+        std::cout << "\n--- XYZ Bank ATM ---\n";
+        std::cout << "1. View Balance\n";
+        std::cout << "2. Withdraw\n";
+        std::cout << "3. Deposit\n";
+        std::cout << "4. Exit\n";
+        std::cout << "Choose an option: ";
+        if (!(std::cin >> option)) {
+            std::cin.clear(); // clear error flag
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // discard invalid input
+            std::cout << "Invalid input. Please enter a number.\n";
+            option = 0; // set to invalid option
+            continue;
+        }
+
+        switch (option) {
+            case 1:
+                std::cout << "Current Balance: $" << acc.getBalance() << std::endl;
+                break;
+            case 2:
+                std::cout << "Enter amount to withdraw: ";
+                while (!(std::cin >> amt)) {
+                    std::cin.clear();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    std::cout << "Invalid input. Please enter a numeric value for withdrawal amount: ";
+                }
+                acc.withdraw(amt);
+                break;
+            case 3:
+                std::cout << "Enter amount to deposit: ";
+                while (!(std::cin >> amt)) {
+                    std::cin.clear();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    std::cout << "Invalid input. Please enter a numeric value for deposit amount: ";
+                }
+                acc.deposit(amt);
+                break;
+            case 4:
+                std::cout << "Thanks for using XYZ Bank.\n";
+                break;
+            default:
+                std::cout << "Invalid choice. Try again.\n";
+        }
+    }
+
+    return 0;
+}
