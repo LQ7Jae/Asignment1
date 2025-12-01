@@ -1,0 +1,127 @@
+#include <iostream>
+using namespace std;
+
+// ===============================
+// Base Class: Account
+// ===============================
+class Account {
+protected:
+    double balance;
+
+public:
+    // Constructor
+    Account(double initialBalance) {
+        if (initialBalance >= 0.0)
+            balance = initialBalance;
+        else {
+            balance = 0.0;
+            cout << "Invalid initial balance. Balance set to 0.0" << endl;
+        }
+    }
+
+    // Credit (deposit)
+    void credit(double amount) {
+        if (amount > 0)
+            balance += amount;
+        else
+            cout << "Deposit amount must be positive." << endl;
+    }
+
+    // Debit (withdraw) - returns true if successful
+    virtual bool debit(double amount) {
+        if (amount > balance) {
+            cout << "Debit amount exceeded account balance." << endl;
+            return false;
+        } else {
+            balance -= amount;
+            return true;
+        }
+    }
+
+    // Get current balance
+    double getBalance() const {
+        return balance;
+    }
+};
+
+// ===============================
+// Derived Class: SavingsAccount
+// ===============================
+class SavingsAccount : public Account {
+private:
+    double interestRate;
+
+public:
+    // Constructor
+    SavingsAccount(double initialBalance, double rate)
+        : Account(initialBalance) {
+        interestRate = rate;
+    }
+
+    // Calculate interest
+    double calculateInterest() {
+        return balance * interestRate;
+    }
+};
+
+// ===============================
+// Derived Class: ChequingAccount
+// ===============================
+class ChequingAccount : public Account {
+private:
+    double transactionFee;
+
+    // Deduct fee from account
+    void chargeFee() {
+        balance -= transactionFee;
+    }
+
+public:
+    // Constructor
+    ChequingAccount(double initialBalance, double fee)
+        : Account(initialBalance) {
+        transactionFee = fee;
+    }
+
+    // Redefined debit function
+    bool debit(double amount) override {
+        if (Account::debit(amount)) {  
+            chargeFee();
+            return true;
+        }
+        return false;
+    }
+};
+
+// ===============================
+// MAIN PROGRAM - Test the classes
+// ===============================
+int main() {
+
+    // Create Savings Account with balance 1000 and interest rate 5%
+    SavingsAccount savings(1000.0, 0.05);
+
+    // Create Chequing Account with balance 500 and $10 fee
+    ChequingAccount chequing(500.0, 10.0);
+
+    cout << "=== Savings Account Test ===" << endl;
+    cout << "Initial Balance: $" << savings.getBalance() << endl;
+
+    double interest = savings.calculateInterest();
+    cout << "Interest Earned: $" << interest << endl;
+
+    savings.credit(interest);
+    cout << "Balance After Adding Interest: $" << savings.getBalance() << endl;
+
+
+    cout << "\n=== Chequing Account Test ===" << endl;
+    cout << "Initial Balance: $" << chequing.getBalance() << endl;
+
+    cout << "Attempting withdrawal of $100..." << endl;
+    chequing.debit(100.0);
+
+    cout << "Balance After Withdrawal + Fee: $" << chequing.getBalance() << endl;
+
+    return 0;
+}
+
