@@ -1,9 +1,8 @@
 #include <iostream>
 using namespace std;
 
-// ===============================
+
 // Base Class: Account
-// ===============================
 class Account {
 protected:
     double balance;
@@ -44,9 +43,8 @@ public:
     }
 };
 
-// ===============================
+
 // Derived Class: SavingsAccount
-// ===============================
 class SavingsAccount : public Account {
 private:
     double interestRate;
@@ -64,16 +62,18 @@ public:
     }
 };
 
-// ===============================
 // Derived Class: ChequingAccount
-// ===============================
 class ChequingAccount : public Account {
 private:
     double transactionFee;
 
     // Deduct fee from account
     void chargeFee() {
-        balance -= transactionFee;
+        if (balance >= transactionFee) {
+            balance -= transactionFee;
+        } else {
+            cout << "Insufficient balance to deduct transaction fee." << endl;
+        }
     }
 
 public:
@@ -85,17 +85,18 @@ public:
 
     // Redefined debit function
     bool debit(double amount) override {
-        if (Account::debit(amount)) {  
-            chargeFee();
+        double totalAmount = amount + transactionFee;
+        if (totalAmount > balance) {
+            cout << "Debit amount plus fee exceeded account balance." << endl;
+            return false;
+        } else {
+            balance -= totalAmount;
             return true;
         }
-        return false;
     }
 };
+// MAIN PROGRAM - to test the classes
 
-// ===============================
-// MAIN PROGRAM - Test the classes
-// ===============================
 int main() {
 
     // Create Savings Account with balance 1000 and interest rate 5%
