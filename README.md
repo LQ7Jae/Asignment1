@@ -1,7 +1,7 @@
 # Asignment1
 For Introduction To object oriented programmming
 Chamoise Reid 
-
+Jonathan Hall
 
 README.md — Assignment 2: Account Inheritance System
 
